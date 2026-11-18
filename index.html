@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HızTesti – İnternet hızını ölç</title>
+<style>
+:root{--bg:#070b1f;--bg2:#0e1433;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--tx:#eef1ff;--mut:#8f98c4;--dl:#22e3c4;--ul:#b57bff;--go:#ffd23f}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--tx);min-height:100vh;
+background:radial-gradient(900px 500px at 15% -10%,#2a1d6e55,transparent),radial-gradient(800px 500px at 100% 10%,#0b6e7a44,transparent),var(--bg);padding:0 20px 40px}
+header{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px;display:flex;gap:10px;align-items:center}
+.logo i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--dl),var(--ul));display:block}
+.pill{font-size:13px;color:var(--mut);border:1px solid var(--line);padding:7px 14px;border-radius:99px;background:var(--card)}
+main{max-width:1000px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 18px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 22px;backdrop-filter:blur(14px)}
+.stat small{color:var(--mut);font-size:13px}
+.stat b{display:block;font-size:34px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+.stat b em{font-style:normal;font-size:14px;color:var(--mut);font-weight:500;margin-left:6px}
+.dl b{color:var(--dl)}.ul b{color:var(--ul)}
+.stage{position:relative;background:linear-gradient(180deg,var(--card),transparent);border:1px solid var(--line);border-radius:32px;padding:30px 20px 26px;text-align:center;overflow:hidden}
+.gauge{width:min(440px,100%);margin:0 auto;position:relative}
+.gauge svg{width:100%;display:block}
+.track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:18;stroke-linecap:round}
+.fill{fill:none;stroke-width:18;stroke-linecap:round;transition:stroke-dashoffset .25s linear,stroke .3s}
+.read{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:30px}
+.read .v{font-size:clamp(54px,12vw,84px);font-weight:800;letter-spacing:-3px;font-variant-numeric:tabular-nums;line-height:1}
+.read .u{color:var(--mut);font-size:15px;margin-top:6px}
+.phase{height:22px;margin-top:6px;color:var(--mut);font-size:15px}
+.go{margin:16px auto 6px;width:130px;height:130px;border-radius:50%;border:0;cursor:pointer;font:800 26px inherit;font-family:inherit;color:#0a0f2a;
+background:radial-gradient(circle at 30% 25%,#fff3b0,var(--go));box-shadow:0 0 0 10px rgba(255,210,63,.12),0 0 60px rgba(255,210,63,.35);transition:transform .2s,box-shadow .2s}
+.go:hover{transform:scale(1.05)}.go:focus-visible{outline:3px solid #fff;outline-offset:6px}
+.go:disabled{cursor:wait;filter:saturate(.4);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 22px rgba(255,210,63,.04),0 0 60px rgba(255,210,63,.2)}}
+svg.spark{width:100%;height:60px;margin-top:10px}
+.info{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px 24px;backdrop-filter:blur(14px)}
+.box h3{font-size:14px;color:var(--mut);font-weight:600;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
+.row:first-of-type{border-top:0}.row span:first-child{color:var(--mut)}.row span:last-child{font-weight:600;text-align:right;word-break:break-all}
+.ip{font-size:28px;font-weight:800;letter-spacing:-.5px;word-break:break-all;margin-bottom:8px}
+.btn2{margin-top:12px;background:transparent;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.btn2:hover{background:var(--card)}
+footer{text-align:center;color:var(--mut);font-size:13px;margin-top:26px}
+@media(max-width:720px){.stats,.info{grid-template-columns:1fr}.stat b{font-size:28px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i></i>HızTesti</div>
+  <div class="pill" id="isp">Bağlantı bilgisi alınıyor…</div>
+</header>
+<main>
+  <section class="stats">
+    <div class="stat"><small>Ping</small><b id="ping">–<em>ms</em></b></div>
+    <div class="stat dl"><small>İndirme</small><b id="dlv">–<em>Mbps</em></b></div>
+    <div class="stat ul"><small>Yükleme</small><b id="ulv">–<em>Mbps</em></b></div>
+  </section>
+
+  <section class="stage">
+    <div class="gauge">
+      <svg viewBox="0 0 400 270" aria-hidden="true">
+        <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#22e3c4"/><stop offset="1" stop-color="#6aa8ff"/></linearGradient></defs>
+        <path class="track" d="M50 230 A150 150 0 1 1 350 230"/>
+        <path class="fill" id="arc" d="M50 230 A150 150 0 1 1 350 230" stroke="url(#g)"/>
+      </svg>
+      <div class="read"><div class="v" id="live">0</div><div class="u">Mbps</div></div>
+    </div>
+    <div class="phase" id="phase" aria-live="polite">Teste başlamak için GO’ya bas</div>
+    <button class="go" id="go">GO</button>
+    <svg class="spark" id="spark" viewBox="0 0 400 60" preserveAspectRatio="none"><polyline id="line" fill="none" stroke="var(--dl)" stroke-width="2.5" stroke-linejoin="round" points=""/></svg>
+  </section>
+
+  <section class="info">
+    <div class="box">
+      <h3>IP adresin</h3>
+      <div class="ip" id="ip">…</div>
+      <div class="row"><span>Servis sağlayıcı</span><span id="org">–</span></div>
+      <div class="row"><span>Şehir / Ülke</span><span id="city">–</span></div>
+    </div>
+    <div class="box">
+      <h3>Konumun</h3>
+      <div class="row"><span>Enlem</span><span id="lat">–</span></div>
+      <div class="row"><span>Boylam</span><span id="lon">–</span></div>
+      <div class="row"><span>Durum</span><span id="gst">İzin bekleniyor</span></div>
+      <button class="btn2" id="locbtn">Konumumu paylaş</button>
+    </div>
+  </section>
+  <footer>Ölçümler Cloudflare hız sunucuları üzerinden yapılır. Sonuçlar ağ yoğunluğuna göre değişebilir.</footer>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const ARC=Math.PI*150*1.5; // yay uzunluğu (270°)
+const arc=$('arc');arc.style.strokeDasharray=ARC;arc.style.strokeDashoffset=ARC;
+const frac=v=>Math.min(1,Math.log10(1+v)/Math.log10(1001));
+function gauge(v,color){$('live').textContent=v<10?v.toFixed(1):Math.round(v);arc.style.strokeDashoffset=ARC*(1-frac(v));if(color)arc.style.stroke=color}
+const fmt=v=>v<10?v.toFixed(2):v.toFixed(1);
+let samples=[];
+function spark(color){const l=$('line');l.setAttribute('stroke',color);const m=Math.max(...samples,1);
+ l.setAttribute('points',samples.map((s,i)=>`${(i/Math.max(samples.length-1,1))*400},${56-(s/m)*50}`).join(' '))}
+
+/* IP + konum bilgisi */
+async function loadIP(){
+  try{
+    const r=await fetch('https://speed.cloudflare.com/meta');const d=await r.json();
+    $('ip').textContent=d.clientIp;$('org').textContent=d.asOrganization||'–';
+    $('city').textContent=[d.city,d.country].filter(Boolean).join(', ')||'–';
+    $('isp').textContent=d.asOrganization||'Bağlı';
+    window._ipLoc=d;
+  }catch(e){
+    try{const r=await fetch('https://api.ipify.org?format=json');const d=await r.json();$('ip').textContent=d.ip;$('isp').textContent='Bağlı'}
+    catch(_){$('ip').textContent='Alınamadı';$('isp').textContent='Çevrimdışı'}
+  }
+}
+function askLoc(){
+  if(!navigator.geolocation){$('gst').textContent='Desteklenmiyor';return}
+  $('gst').textContent='İzin isteniyor…';
+  navigator.geolocation.getCurrentPosition(p=>{
+    $('lat').textContent=p.coords.latitude.toFixed(5);$('lon').textContent=p.coords.longitude.toFixed(5);
+    $('gst').textContent='Hassas konum alındı';
+  },e=>{
+    const d=window._ipLoc;
+    if(d&&d.latitude){$('lat').textContent=(+d.latitude).toFixed(3);$('lon').textContent=(+d.longitude).toFixed(3);}
+    $('gst').textContent=e.code===1?'İzin reddedildi (IP tahmini)':'Alınamadı (IP tahmini)';
+  },{enableHighAccuracy:true,timeout:10000});
+}
+$('locbtn').onclick=askLoc;
+
+/* Ping */
+async function ping(){
+  const t=[];
+  for(let i=0;i<8;i++){const s=performance.now();await fetch('https://speed.cloudflare.com/__down?bytes=0&r='+Math.random(),{cache:'no-store'});t.push(performance.now()-s)}
+  t.shift();return Math.min(...t);
+}
+/* İndirme */
+async function download(ms=9000){
+  const start=performance.now();let total=0,last=start,lastB=0;const ctl=new AbortController();
+  const worker=async()=>{
+    while(performance.now()-start<ms){
+      try{const r=await fetch('https://speed.cloudflare.com/__down?bytes=25000000&r='+Math.random(),{cache:'no-store',signal:ctl.signal});
+        const rd=r.body.getReader();
+        while(true){const {done,value}=await rd.read();if(done)break;total+=value.length;
+          const n=performance.now();if(n-last>250){const v=((total-lastB)*8)/((n-last)/1000)/1e6;last=n;lastB=total;
+            const avg=(total*8)/((n-start)/1000)/1e6;samples.push(v);gauge(avg,'');spark('#22e3c4');$('dlv').firstChild.textContent=fmt(avg)}
+          if(n-start>ms){ctl.abort();return}}
+      }catch(e){return}
+    }
+  };
+  await Promise.all([worker(),worker(),worker(),worker()]);
+  return (total*8)/((performance.now()-start)/1000)/1e6;
+}
+/* Yükleme */
+function upload(ms=8000){
+  return new Promise(res=>{
+    const start=performance.now();const blob=new Blob([new Uint8Array(6e6)]);const loaded={};let n=0,done=0,fin=false,last=start;
+    const sum=()=>Object.values(loaded).reduce((a,b)=>a+b,0);
+    const finish=()=>{if(fin)return;fin=true;res((sum()*8)/((performance.now()-start)/1000)/1e6)};
+    const spawn=()=>{
+      if(performance.now()-start>ms){if(++done>=3)finish();return}
+      const id=n++;const x=new XMLHttpRequest();x.open('POST','https://speed.cloudflare.com/__up');
+      x.upload.onprogress=e=>{loaded[id]=e.loaded;const now=performance.now();
+        if(now-last>250){last=now;const avg=(sum()*8)/((now-start)/1000)/1e6;samples.push(avg);gauge(avg);spark('#b57bff');$('ulv').firstChild.textContent=fmt(avg)}
+        if(now-start>ms){x.abort()}};
+      x.onload=x.onerror=x.onabort=spawn;x.send(blob);
+    };
+    spawn();spawn();spawn();
+  });
+}
+
+$('go').onclick=async()=>{
+  const b=$('go');b.disabled=true;b.textContent='…';
+  ['ping','dlv','ulv'].forEach(i=>$(i).innerHTML='–<em>'+(i==='ping'?'ms':'Mbps')+'</em>');
+  try{
+    $('phase').textContent='Ping ölçülüyor…';gauge(0,'#6aa8ff');
+    const p=await ping();$('ping').innerHTML=Math.round(p)+'<em>ms</em>';
+    samples=[];$('phase').textContent='İndirme hızı test ediliyor…';gauge(0,'#22e3c4');
+    const d=await download();gauge(d);$('dlv').innerHTML=fmt(d)+'<em>Mbps</em>';
+    samples=[];$('phase').textContent='Yükleme hızı test ediliyor…';gauge(0,'#b57bff');
+    const u=await upload();gauge(u);$('ulv').innerHTML=fmt(u)+'<em>Mbps</em>';
+    $('phase').textContent='Test tamamlandı';
+  }catch(e){$('phase').textContent='Test başarısız: internet bağlantını kontrol et'}
+  b.disabled=false;b.textContent='TEKRAR';
+};
+
+loadIP();
+askLoc();
+</script>
+</body>
+</html>
