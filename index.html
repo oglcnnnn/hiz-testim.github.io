@@ -3,191 +3,134 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HızTesti – İnternet hızını ölç</title>
+<title>Hız Testi</title>
 <style>
-:root{--bg:#070b1f;--bg2:#0e1433;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--tx:#eef1ff;--mut:#8f98c4;--dl:#22e3c4;--ul:#b57bff;--go:#ffd23f}
+:root{--bg:#f6f8fb;--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--card:#fff;--dl:#2563eb;--ul:#0f766e}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1020;--ink:#f1f5f9;--mut:#94a3b8;--line:#1e293b;--card:#111830;--dl:#60a5fa;--ul:#2dd4bf}}
 *{box-sizing:border-box;margin:0}
-body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--tx);min-height:100vh;
-background:radial-gradient(900px 500px at 15% -10%,#2a1d6e55,transparent),radial-gradient(800px 500px at 100% 10%,#0b6e7a44,transparent),var(--bg);padding:0 20px 40px}
-header{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:22px 0}
-.logo{font-weight:800;font-size:22px;letter-spacing:-.5px;display:flex;gap:10px;align-items:center}
-.logo i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--dl),var(--ul));display:block}
-.pill{font-size:13px;color:var(--mut);border:1px solid var(--line);padding:7px 14px;border-radius:99px;background:var(--card)}
-main{max-width:1000px;margin:0 auto}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0 18px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 22px;backdrop-filter:blur(14px)}
-.stat small{color:var(--mut);font-size:13px}
-.stat b{display:block;font-size:34px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
-.stat b em{font-style:normal;font-size:14px;color:var(--mut);font-weight:500;margin-left:6px}
-.dl b{color:var(--dl)}.ul b{color:var(--ul)}
-.stage{position:relative;background:linear-gradient(180deg,var(--card),transparent);border:1px solid var(--line);border-radius:32px;padding:30px 20px 26px;text-align:center;overflow:hidden}
-.gauge{width:min(440px,100%);margin:0 auto;position:relative}
-.gauge svg{width:100%;display:block}
-.track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:18;stroke-linecap:round}
-.fill{fill:none;stroke-width:18;stroke-linecap:round;transition:stroke-dashoffset .25s linear,stroke .3s}
-.read{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:30px}
-.read .v{font-size:clamp(54px,12vw,84px);font-weight:800;letter-spacing:-3px;font-variant-numeric:tabular-nums;line-height:1}
-.read .u{color:var(--mut);font-size:15px;margin-top:6px}
-.phase{height:22px;margin-top:6px;color:var(--mut);font-size:15px}
-.go{margin:16px auto 6px;width:130px;height:130px;border-radius:50%;border:0;cursor:pointer;font:800 26px inherit;font-family:inherit;color:#0a0f2a;
-background:radial-gradient(circle at 30% 25%,#fff3b0,var(--go));box-shadow:0 0 0 10px rgba(255,210,63,.12),0 0 60px rgba(255,210,63,.35);transition:transform .2s,box-shadow .2s}
-.go:hover{transform:scale(1.05)}.go:focus-visible{outline:3px solid #fff;outline-offset:6px}
-.go:disabled{cursor:wait;filter:saturate(.4);animation:pulse 1.4s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 22px rgba(255,210,63,.04),0 0 60px rgba(255,210,63,.2)}}
-svg.spark{width:100%;height:60px;margin-top:10px}
-.info{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px 24px;backdrop-filter:blur(14px)}
-.box h3{font-size:14px;color:var(--mut);font-weight:600;margin-bottom:12px}
-.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
-.row:first-of-type{border-top:0}.row span:first-child{color:var(--mut)}.row span:last-child{font-weight:600;text-align:right;word-break:break-all}
-.ip{font-size:28px;font-weight:800;letter-spacing:-.5px;word-break:break-all;margin-bottom:8px}
-.btn2{margin-top:12px;background:transparent;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
-.btn2:hover{background:var(--card)}
-footer{text-align:center;color:var(--mut);font-size:13px;margin-top:26px}
-@media(max-width:720px){.stats,.info{grid-template-columns:1fr}.stat b{font-size:28px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body{font-family:"Inter","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 20px 40px}
+header{width:100%;max-width:640px;display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.logo{font-weight:700;letter-spacing:-.3px}
+#isp{color:var(--mut)}
+main{width:100%;max-width:640px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding-top:30px}
+.ring{position:relative;width:min(300px,78vw);aspect-ratio:1}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.bg{stroke:var(--line)}
+#arc{stroke:var(--dl);transition:stroke-dashoffset .25s linear,stroke .3s}
+.c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#live{font-size:clamp(56px,16vw,76px);font-weight:300;letter-spacing:-3px;font-variant-numeric:tabular-nums;line-height:1}
+.u{color:var(--mut);font-size:14px;margin-top:8px}
+#phase{color:var(--mut);font-size:14px;margin-top:2px;min-height:20px}
+#go{margin-top:-14px;border:0;background:var(--ink);color:var(--bg);font:600 16px inherit;font-family:inherit;padding:14px 44px;border-radius:99px;cursor:pointer;transition:opacity .2s,transform .2s}
+#go:hover{transform:translateY(-1px)}#go:focus-visible{outline:2px solid var(--dl);outline-offset:3px}
+#go:disabled{opacity:.4;cursor:wait}
+.stats{width:100%;display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border:1px solid var(--line);border-radius:18px}
+.s{padding:20px 10px;text-align:center}
+.s+.s{border-left:1px solid var(--line)}
+.s small{color:var(--mut);font-size:13px}
+.s b{display:block;font-size:26px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
+.s i{font-style:normal;font-size:12px;color:var(--mut);font-weight:400;margin-left:3px}
+.meta{width:100%;font-size:14px}
+.meta div{display:flex;justify-content:space-between;gap:16px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.meta div:last-child{border:0}
+.meta span:first-child{color:var(--mut)}
+.meta span:last-child{font-weight:500;text-align:right;word-break:break-all}
+#loc{background:none;border:0;color:var(--dl);font:inherit;font-weight:500;cursor:pointer;padding:0}
+@media(max-width:480px){.s b{font-size:21px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo"><i></i>HızTesti</div>
-  <div class="pill" id="isp">Bağlantı bilgisi alınıyor…</div>
-</header>
+<header><div class="logo">Hız Testi</div><div id="isp">Bağlanıyor…</div></header>
+
 <main>
-  <section class="stats">
-    <div class="stat"><small>Ping</small><b id="ping">–<em>ms</em></b></div>
-    <div class="stat dl"><small>İndirme</small><b id="dlv">–<em>Mbps</em></b></div>
-    <div class="stat ul"><small>Yükleme</small><b id="ulv">–<em>Mbps</em></b></div>
-  </section>
+  <div>
+    <div class="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="54"/><circle id="arc" cx="60" cy="60" r="54"/></svg>
+      <div class="c"><div id="live">0</div><div class="u">Mbps</div></div>
+    </div>
+  </div>
+  <div style="text-align:center">
+    <div id="phase" aria-live="polite">Hazır</div><br>
+    <button id="go">Testi başlat</button>
+  </div>
 
-  <section class="stage">
-    <div class="gauge">
-      <svg viewBox="0 0 400 270" aria-hidden="true">
-        <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#22e3c4"/><stop offset="1" stop-color="#6aa8ff"/></linearGradient></defs>
-        <path class="track" d="M50 230 A150 150 0 1 1 350 230"/>
-        <path class="fill" id="arc" d="M50 230 A150 150 0 1 1 350 230" stroke="url(#g)"/>
-      </svg>
-      <div class="read"><div class="v" id="live">0</div><div class="u">Mbps</div></div>
-    </div>
-    <div class="phase" id="phase" aria-live="polite">Teste başlamak için GO’ya bas</div>
-    <button class="go" id="go">GO</button>
-    <svg class="spark" id="spark" viewBox="0 0 400 60" preserveAspectRatio="none"><polyline id="line" fill="none" stroke="var(--dl)" stroke-width="2.5" stroke-linejoin="round" points=""/></svg>
-  </section>
+  <div class="stats">
+    <div class="s"><small>Ping</small><b id="ping">–<i>ms</i></b></div>
+    <div class="s"><small>İndirme</small><b id="dlv">–<i>Mbps</i></b></div>
+    <div class="s"><small>Yükleme</small><b id="ulv">–<i>Mbps</i></b></div>
+  </div>
 
-  <section class="info">
-    <div class="box">
-      <h3>IP adresin</h3>
-      <div class="ip" id="ip">…</div>
-      <div class="row"><span>Servis sağlayıcı</span><span id="org">–</span></div>
-      <div class="row"><span>Şehir / Ülke</span><span id="city">–</span></div>
-    </div>
-    <div class="box">
-      <h3>Konumun</h3>
-      <div class="row"><span>Enlem</span><span id="lat">–</span></div>
-      <div class="row"><span>Boylam</span><span id="lon">–</span></div>
-      <div class="row"><span>Durum</span><span id="gst">İzin bekleniyor</span></div>
-      <button class="btn2" id="locbtn">Konumumu paylaş</button>
-    </div>
-  </section>
-  <footer>Ölçümler Cloudflare hız sunucuları üzerinden yapılır. Sonuçlar ağ yoğunluğuna göre değişebilir.</footer>
+  <div class="meta">
+    <div><span>IP adresi</span><span id="ip">…</span></div>
+    <div><span>Şehir</span><span id="city">–</span></div>
+    <div><span>Konum</span><span id="pos"><button id="loc">Konumumu paylaş</button></span></div>
+  </div>
 </main>
 
 <script>
 const $=id=>document.getElementById(id);
-const ARC=Math.PI*150*1.5; // yay uzunluğu (270°)
-const arc=$('arc');arc.style.strokeDasharray=ARC;arc.style.strokeDashoffset=ARC;
+const C=2*Math.PI*54,arc=$('arc');arc.style.strokeDasharray=C;arc.style.strokeDashoffset=C;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n);
 const frac=v=>Math.min(1,Math.log10(1+v)/Math.log10(1001));
-function gauge(v,color){$('live').textContent=v<10?v.toFixed(1):Math.round(v);arc.style.strokeDashoffset=ARC*(1-frac(v));if(color)arc.style.stroke=color}
 const fmt=v=>v<10?v.toFixed(2):v.toFixed(1);
-let samples=[];
-function spark(color){const l=$('line');l.setAttribute('stroke',color);const m=Math.max(...samples,1);
- l.setAttribute('points',samples.map((s,i)=>`${(i/Math.max(samples.length-1,1))*400},${56-(s/m)*50}`).join(' '))}
+function gauge(v,col){$('live').textContent=v<10?v.toFixed(1):Math.round(v);arc.style.strokeDashoffset=C*(1-frac(v));if(col)arc.style.stroke=`var(${col})`}
+const set=(id,v,u)=>$(id).innerHTML=v+'<i>'+u+'</i>';
 
-/* IP + konum bilgisi */
+/* IP ve konum */
 async function loadIP(){
-  try{
-    const r=await fetch('https://speed.cloudflare.com/meta');const d=await r.json();
-    $('ip').textContent=d.clientIp;$('org').textContent=d.asOrganization||'–';
-    $('city').textContent=[d.city,d.country].filter(Boolean).join(', ')||'–';
-    $('isp').textContent=d.asOrganization||'Bağlı';
-    window._ipLoc=d;
-  }catch(e){
-    try{const r=await fetch('https://api.ipify.org?format=json');const d=await r.json();$('ip').textContent=d.ip;$('isp').textContent='Bağlı'}
-    catch(_){$('ip').textContent='Alınamadı';$('isp').textContent='Çevrimdışı'}
-  }
+  try{const d=await (await fetch('https://speed.cloudflare.com/meta')).json();
+    $('ip').textContent=d.clientIp;$('isp').textContent=d.asOrganization||'Bağlı';
+    $('city').textContent=[d.city,d.country].filter(Boolean).join(', ')||'–';window._ip=d;
+  }catch(e){try{const d=await (await fetch('https://api.ipify.org?format=json')).json();$('ip').textContent=d.ip;$('isp').textContent='Bağlı'}
+    catch(_){$('ip').textContent='Alınamadı';$('isp').textContent='Çevrimdışı'}}
 }
 function askLoc(){
-  if(!navigator.geolocation){$('gst').textContent='Desteklenmiyor';return}
-  $('gst').textContent='İzin isteniyor…';
-  navigator.geolocation.getCurrentPosition(p=>{
-    $('lat').textContent=p.coords.latitude.toFixed(5);$('lon').textContent=p.coords.longitude.toFixed(5);
-    $('gst').textContent='Hassas konum alındı';
-  },e=>{
-    const d=window._ipLoc;
-    if(d&&d.latitude){$('lat').textContent=(+d.latitude).toFixed(3);$('lon').textContent=(+d.longitude).toFixed(3);}
-    $('gst').textContent=e.code===1?'İzin reddedildi (IP tahmini)':'Alınamadı (IP tahmini)';
-  },{enableHighAccuracy:true,timeout:10000});
+  if(!navigator.geolocation){$('pos').textContent='Desteklenmiyor';return}
+  navigator.geolocation.getCurrentPosition(p=>{$('pos').textContent=p.coords.latitude.toFixed(4)+', '+p.coords.longitude.toFixed(4)},
+  e=>{$('pos').innerHTML='İzin verilmedi · <button id="loc">tekrar dene</button>';$('loc').onclick=askLoc},{enableHighAccuracy:true,timeout:10000});
 }
-$('locbtn').onclick=askLoc;
+$('loc').onclick=askLoc;
 
-/* Ping */
-async function ping(){
-  const t=[];
-  for(let i=0;i<8;i++){const s=performance.now();await fetch('https://speed.cloudflare.com/__down?bytes=0&r='+Math.random(),{cache:'no-store'});t.push(performance.now()-s)}
-  t.shift();return Math.min(...t);
-}
-/* İndirme */
+/* Ölçümler */
+async function ping(){const t=[];for(let i=0;i<8;i++){const s=performance.now();await fetch('https://speed.cloudflare.com/__down?bytes=0&r='+Math.random(),{cache:'no-store'});t.push(performance.now()-s)}t.shift();return Math.min(...t)}
 async function download(ms=9000){
-  const start=performance.now();let total=0,last=start,lastB=0;const ctl=new AbortController();
-  const worker=async()=>{
-    while(performance.now()-start<ms){
-      try{const r=await fetch('https://speed.cloudflare.com/__down?bytes=25000000&r='+Math.random(),{cache:'no-store',signal:ctl.signal});
-        const rd=r.body.getReader();
-        while(true){const {done,value}=await rd.read();if(done)break;total+=value.length;
-          const n=performance.now();if(n-last>250){const v=((total-lastB)*8)/((n-last)/1000)/1e6;last=n;lastB=total;
-            const avg=(total*8)/((n-start)/1000)/1e6;samples.push(v);gauge(avg,'');spark('#22e3c4');$('dlv').firstChild.textContent=fmt(avg)}
-          if(n-start>ms){ctl.abort();return}}
-      }catch(e){return}
-    }
-  };
-  await Promise.all([worker(),worker(),worker(),worker()]);
-  return (total*8)/((performance.now()-start)/1000)/1e6;
+  const start=performance.now();let total=0,last=start;const ctl=new AbortController();
+  const w=async()=>{while(performance.now()-start<ms){try{
+    const r=await fetch('https://speed.cloudflare.com/__down?bytes=25000000&r='+Math.random(),{cache:'no-store',signal:ctl.signal});const rd=r.body.getReader();
+    while(true){const {done,value}=await rd.read();if(done)break;total+=value.length;const n=performance.now();
+      if(n-last>250){last=n;const a=total*8/((n-start)/1000)/1e6;gauge(a);set('dlv',fmt(a),'Mbps')}
+      if(n-start>ms){ctl.abort();return}}}catch(e){return}}};
+  await Promise.all([w(),w(),w(),w()]);return total*8/((performance.now()-start)/1000)/1e6;
 }
-/* Yükleme */
-function upload(ms=8000){
-  return new Promise(res=>{
-    const start=performance.now();const blob=new Blob([new Uint8Array(6e6)]);const loaded={};let n=0,done=0,fin=false,last=start;
-    const sum=()=>Object.values(loaded).reduce((a,b)=>a+b,0);
-    const finish=()=>{if(fin)return;fin=true;res((sum()*8)/((performance.now()-start)/1000)/1e6)};
-    const spawn=()=>{
-      if(performance.now()-start>ms){if(++done>=3)finish();return}
-      const id=n++;const x=new XMLHttpRequest();x.open('POST','https://speed.cloudflare.com/__up');
-      x.upload.onprogress=e=>{loaded[id]=e.loaded;const now=performance.now();
-        if(now-last>250){last=now;const avg=(sum()*8)/((now-start)/1000)/1e6;samples.push(avg);gauge(avg);spark('#b57bff');$('ulv').firstChild.textContent=fmt(avg)}
-        if(now-start>ms){x.abort()}};
-      x.onload=x.onerror=x.onabort=spawn;x.send(blob);
-    };
-    spawn();spawn();spawn();
-  });
-}
+function upload(ms=8000){return new Promise(res=>{
+  const start=performance.now(),blob=new Blob([new Uint8Array(6e6)]),L={};let n=0,done=0,fin=false,last=start;
+  const sum=()=>Object.values(L).reduce((a,b)=>a+b,0);
+  const finish=()=>{if(fin)return;fin=true;res(sum()*8/((performance.now()-start)/1000)/1e6)};
+  const go=()=>{if(performance.now()-start>ms){if(++done>=3)finish();return}
+    const id=n++,x=new XMLHttpRequest();x.open('POST','https://speed.cloudflare.com/__up');
+    x.upload.onprogress=e=>{L[id]=e.loaded;const now=performance.now();
+      if(now-last>250){last=now;const a=sum()*8/((now-start)/1000)/1e6;gauge(a);set('ulv',fmt(a),'Mbps')}
+      if(now-start>ms)x.abort()};
+    x.onload=x.onerror=x.onabort=go;x.send(blob)};
+  go();go();go()})}
 
 $('go').onclick=async()=>{
-  const b=$('go');b.disabled=true;b.textContent='…';
-  ['ping','dlv','ulv'].forEach(i=>$(i).innerHTML='–<em>'+(i==='ping'?'ms':'Mbps')+'</em>');
+  const b=$('go');b.disabled=true;
+  set('ping','–','ms');set('dlv','–','Mbps');set('ulv','–','Mbps');
   try{
-    $('phase').textContent='Ping ölçülüyor…';gauge(0,'#6aa8ff');
-    const p=await ping();$('ping').innerHTML=Math.round(p)+'<em>ms</em>';
-    samples=[];$('phase').textContent='İndirme hızı test ediliyor…';gauge(0,'#22e3c4');
-    const d=await download();gauge(d);$('dlv').innerHTML=fmt(d)+'<em>Mbps</em>';
-    samples=[];$('phase').textContent='Yükleme hızı test ediliyor…';gauge(0,'#b57bff');
-    const u=await upload();gauge(u);$('ulv').innerHTML=fmt(u)+'<em>Mbps</em>';
-    $('phase').textContent='Test tamamlandı';
-  }catch(e){$('phase').textContent='Test başarısız: internet bağlantını kontrol et'}
-  b.disabled=false;b.textContent='TEKRAR';
+    $('phase').textContent='Ping ölçülüyor…';gauge(0,'--dl');
+    const p=await ping();set('ping',Math.round(p),'ms');
+    $('phase').textContent='İndirme ölçülüyor…';gauge(0,'--dl');
+    const d=await download();gauge(d);set('dlv',fmt(d),'Mbps');
+    $('phase').textContent='Yükleme ölçülüyor…';gauge(0,'--ul');
+    const u=await upload();gauge(u);set('ulv',fmt(u),'Mbps');
+    $('phase').textContent='Tamamlandı';
+  }catch(e){$('phase').textContent='Test başarısız, bağlantını kontrol et'}
+  b.disabled=false;b.textContent='Tekrar test et';
 };
-
-loadIP();
-askLoc();
+loadIP();askLoc();
 </script>
 </body>
 </html>
